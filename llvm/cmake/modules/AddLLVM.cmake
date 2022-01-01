@@ -9,7 +9,7 @@ function(llvm_update_compile_flags name)
     set(update_src_props ON)
   endif()
 
-  list(APPEND LLVM_COMPILE_CFLAGS " ${LLVM_COMPILE_FLAGS}")
+  list(APPEND LLVM_COMPILE_CFLAGS "${LLVM_COMPILE_FLAGS}")
 
   # LLVM_REQUIRES_EH is an internal flag that individual targets can use to
   # force EH
@@ -59,25 +59,37 @@ function(llvm_update_compile_flags name)
   string(REPLACE ";" " " target_compile_flags " ${LLVM_COMPILE_FLAGS}")
   string(REPLACE ";" " " target_compile_cflags " ${LLVM_COMPILE_CFLAGS}")
 
+  set_property(TARGET ${name} APPEND PROPERTY INTERFACE_COMPILE_OPTIONS ${LLVM_COMPILE_CFLAGS})
   if(update_src_props)
+    set(cpp_target FALSE)
     foreach(fn ${sources})
       get_filename_component(suf ${fn} EXT)
       if("${suf}" STREQUAL ".cpp")
         set_property(SOURCE ${fn} APPEND_STRING PROPERTY
           COMPILE_FLAGS "${target_compile_flags}")
+        set(cpp_target TRUE)
       endif()
       if("${suf}" STREQUAL ".c")
         set_property(SOURCE ${fn} APPEND_STRING PROPERTY
           COMPILE_FLAGS "${target_compile_cflags}")
       endif()
     endforeach()
+    if(cpp_target)
+      set_property(TARGET ${name} APPEND PROPERTY INTERFACE_COMPILE_OPTIONS ${LLVM_COMPILE_FLAGS})
+    endif()
   else()
     # Update target props, since all sources are C++.
     set_property(TARGET ${name} APPEND_STRING PROPERTY
       COMPILE_FLAGS "${target_compile_flags}")
+    set_property(TARGET ${name} APPEND PROPERTY INTERFACE_COMPILE_OPTIONS ${LLVM_COMPILE_FLAGS})
   endif()
 
   set_property(TARGET ${name} APPEND PROPERTY COMPILE_DEFINITIONS ${LLVM_COMPILE_DEFINITIONS})
+  set_property(TARGET ${name} APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS ${LLVM_COMPILE_DEFINITIONS})
+  target_include_directories(${name} PUBLIC
+    $<BUILD_INTERFACE:${LLVM_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${LLVM_MAIN_INCLUDE_DIR}>
+  )
 endfunction()
 
 function(add_llvm_symbol_exports target_name export_file)
@@ -824,7 +836,8 @@ macro(add_llvm_library name)
               ${export_to_llvmexports}
               LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
               ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
-              RUNTIME DESTINATION bin COMPONENT ${name})
+              RUNTIME DESTINATION bin COMPONENT ${name}
+              INCLUDES DESTINATION include)
 
       if (NOT LLVM_ENABLE_IDE)
         add_llvm_install_targets(install-${name}
