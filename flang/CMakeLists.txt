@@ -84,7 +84,7 @@ if (FLANG_STANDALONE_BUILD)
   # cases.
   get_filename_component(
     CLANG_DIR_ABSOLUTE
-    ${CLANG_DIR}
+    ${Clang_DIR}
     REALPATH
     ${CMAKE_CURRENT_SOURCE_DIR})
   list(APPEND CMAKE_MODULE_PATH ${CLANG_DIR_ABSOLUTE})

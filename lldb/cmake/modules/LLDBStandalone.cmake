@@ -8,6 +8,7 @@ option(LLVM_INSTALL_TOOLCHAIN_ONLY "Only include toolchain files in the 'install
 
 find_package(LLVM REQUIRED CONFIG HINTS ${LLVM_DIR} NO_CMAKE_FIND_ROOT_PATH)
 find_package(Clang REQUIRED CONFIG HINTS ${Clang_DIR} ${LLVM_DIR}/../clang NO_CMAKE_FIND_ROOT_PATH)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 # We set LLVM_CMAKE_DIR so that GetSVN.cmake is found correctly when building SVNVersion.inc
 set(LLVM_CMAKE_DIR ${LLVM_CMAKE_DIR} CACHE PATH "Path to LLVM CMake modules")

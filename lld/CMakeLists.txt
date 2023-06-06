@@ -16,6 +16,9 @@ endif()
 # Must go below project(..)
 include(GNUInstallDirs)
 
+find_package(Python3 ${LLVM_MINIMUM_PYTHON_VERSION} REQUIRED
+  COMPONENTS Interpreter)
+
 if(LLD_BUILT_STANDALONE)
   set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
   set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -50,9 +53,6 @@ if(LLD_BUILT_STANDALONE)
   link_directories(${LLVM_LIBRARY_DIRS})
 
   if(LLVM_INCLUDE_TESTS)
-    find_package(Python3 ${LLVM_MINIMUM_PYTHON_VERSION} REQUIRED
-      COMPONENTS Interpreter)
-
     # Check prebuilt llvm/utils.
     if(EXISTS ${LLVM_TOOLS_BINARY_DIR}/FileCheck${CMAKE_EXECUTABLE_SUFFIX}
         AND EXISTS ${LLVM_TOOLS_BINARY_DIR}/not${CMAKE_EXECUTABLE_SUFFIX})

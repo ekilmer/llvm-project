@@ -1,7 +1,8 @@
+cmake_minimum_required(VERSION 3.20.0)
+
 # Check if this is a in tree build.
 if (NOT DEFINED LLVM_MAIN_SRC_DIR)
   project(Polly)
-  cmake_minimum_required(VERSION 3.20.0)
   set(POLLY_STANDALONE_BUILD TRUE)
 endif()
 
@@ -9,6 +10,10 @@ endif()
 include(GNUInstallDirs)
 
 if(POLLY_STANDALONE_BUILD)
+  set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
+  set(CMAKE_CXX_STANDARD_REQUIRED YES)
+  set(CMAKE_CXX_EXTENSIONS NO)
+
   # Where is LLVM installed?
   find_package(LLVM CONFIG REQUIRED)
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LLVM_CMAKE_DIR})

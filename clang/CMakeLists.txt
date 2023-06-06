@@ -16,6 +16,9 @@ endif()
 # Must go below project(..)
 include(GNUInstallDirs)
 
+find_package(Python3 ${LLVM_MINIMUM_PYTHON_VERSION} REQUIRED
+  COMPONENTS Interpreter)
+
 if(CLANG_BUILT_STANDALONE)
   set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
   set(CMAKE_CXX_STANDARD_REQUIRED YES)
