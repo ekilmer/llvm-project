@@ -17,4 +17,8 @@ add_tablegen(libc-hdrgen LIBC
 target_include_directories(libc-hdrgen PRIVATE ${LIBC_SOURCE_DIR})
 target_link_libraries(libc-hdrgen PRIVATE LibcTableGenUtil)
 
+if(NOT LIBC_HDRGEN_EXE)
+  set(LIBC_HDRGEN_EXE libc-hdrgen PARENT_SCOPE)
+endif()
+
 add_subdirectory(PrototypeTestGen)
